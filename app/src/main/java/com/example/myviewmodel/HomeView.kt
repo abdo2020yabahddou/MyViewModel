@@ -10,59 +10,49 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun HomeView(
-    viewModel: HomeViewModel = HomeViewModel(),
-    navController: NavController = rememberNavController()
-) {
+fun HomeView(viewModel: HomeViewModel, navController: NavController) {
 
-    var itemValue by remember { mutableStateOf("") }
+    Scaffold(modifier = Modifier.fillMaxSize().padding(20.dp)) {it->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(it),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            OutlinedTextField(
+                value = viewModel.itemValue,
+                onValueChange = {
+                    viewModel.itemValue = it
+                },
+                label = { Text(text = "Fahrenheit") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
 
-    fun calculate(itemValue: Double): Double = (itemValue - 32) * 5 / 9
+            Spacer(modifier = Modifier.height(8.dp))
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        OutlinedTextField(
-            value = itemValue,
-            onValueChange = {
-                itemValue = it
-            },
-            label = { Text(text = "Fahrenheit") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-        )
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                onClick = {
+                    val fahrenheit = viewModel.itemValue.toDoubleOrNull()
+                    if (fahrenheit != null) {
+                        val celsius = viewModel.calculateCelsius()
+                        navController.navigate(Screen.Result.createRoute(celsius!!))
+                    }
+                }) {
+                Text(text = "Calculate")
+            }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            onClick = {
-                val fahrenheit = itemValue.toDoubleOrNull()
-                if (fahrenheit != null) {
-                    val celsius = calculate(fahrenheit)
-                    navController.navigate(Screen.Result.createRoute(celsius))
-                }
-            }) {
-            Text(text = "Calculate")
         }
-
     }
-
 }

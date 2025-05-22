@@ -10,9 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 
 @Composable
-fun Navigation(
-    navController: NavHostController = rememberNavController()
-) {
+fun Navigation(navController: NavHostController = rememberNavController()) {
     val viewModel: HomeViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = Screen.Home.route) {
